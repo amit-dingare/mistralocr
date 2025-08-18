@@ -1,0 +1,3 @@
+mistralai>=1.5.0
+pathlib
+python-dotenv>=1.0.0

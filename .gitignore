@@ -1,0 +1,63 @@
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Output directories
+output/
+results/
+unified_enhanced_results/
+*_results/
+chunks_*/
+
+# Temporary files
+*.tmp
+*.temp
+enhanced_*/
+
+# Logs
+*.log
+
+# PDF files (optional - uncomment if you don't want to track PDFs)
+# *.pdf
+
+# CSV outputs
+*.csv
+
+# OCR results
+*_enhanced_ocr.json
+*_enhanced_ocr.md
