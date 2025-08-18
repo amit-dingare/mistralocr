@@ -1,0 +1,15 @@
+
+name: Back-Merge-workflow
+
+on:
+  repository_dispatch: 
+    types: Promotion_event_backmerge
+
+jobs:
+  Back-Merge-Job:
+    uses: prgxlabs/dop-githubaction/.github/workflows/BackMergeNew.yaml@develop
+    with:
+        repository_url: ${{ github.repository }}
+        release_branch: ${{ github.event.client_payload.release_branch }}
+    secrets: inherit
+ 

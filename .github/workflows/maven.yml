@@ -1,0 +1,82 @@
+name: Java Workflow
+
+on:
+  push:
+    branches:
+      - develop
+      - feature*
+      - release_20*
+      - AC*
+      - CID*
+      - DPS-*
+      - CC-*
+      - EI-*
+      - SC-*
+      - ADT-*
+
+  repository_dispatch:
+    types: Promotion_event
+
+jobs:
+  build-and-deploy:
+    if: ${{ github.ref_name == 'develop' && github.event.client_payload.create_release == false && github.event.client_payload.hotfix == false }}
+    uses: prgxlabs/dop-githubaction/.github/workflows/maven.yml@develop
+    with:
+        repository_url: ${{ github.repository }}
+        branch: ${{ github.ref_name }}
+        project_initials: 'ail'
+        acr-registry: prgxuseacrgbl01
+        helm-repo: prgxlabs/ail-helm-chart
+        projecttype: ddf
+    secrets: inherit
+
+  feature-build:
+    #####if: ${{ startsWith(github.ref, 'refs/heads/feature/') || ( startsWith(github.ref, 'refs/heads/release_20') && inputs.create_release == false) }}
+    if: ${{ (startsWith(github.ref, 'refs/heads/feature') || 
+             startsWith(github.ref, 'refs/heads/release_20') || 
+             startsWith(github.ref, 'refs/heads/AC') || 
+             startsWith(github.ref, 'refs/heads/DPS') ||
+             startsWith(github.ref, 'refs/heads/CC') ||
+             startsWith(github.ref, 'refs/heads/ADT') ||
+             startsWith(github.ref, 'refs/heads/EI') ||
+             startsWith(github.ref, 'refs/heads/SC') ||
+             startsWith(github.ref, 'refs/heads/CID')
+             ) && 
+             inputs.create_release == false }}
+    uses: prgxlabs/dop-githubaction/.github/workflows/featuremaven.yml@develop
+    with:
+          repository_url: ${{ github.repository }}
+          branch: ${{ inputs.branch }}
+          project_initials: 'ail'
+          projecttype: ddf
+    secrets: inherit
+
+  create-release:
+    if: ${{ github.ref_name == 'develop' && github.event.client_payload.create_release == true && github.event.client_payload.hotfix == false && github.event.client_payload.year != 'Select Year' && github.event.client_payload.month != 'Select Month' }}
+    uses: prgxlabs/dop-githubaction/.github/workflows/releasemaven.yml@develop
+    with:
+        repository_url: ${{ github.repository }}
+        branch: ${{ github.ref_name }}
+        project_initials: 'ail'
+        year: ${{ github.event.client_payload.year }}
+        month: ${{ github.event.client_payload.month }}
+        create_release: ${{ github.event.client_payload.create_release }}
+        acr-registry: prgxuseacrgbl01
+        destination-acr: prduseacrgbl00
+        helm-repo: prgxlabs/ail-helm-chart
+        projecttype: ddf
+    secrets: inherit
+
+  hotfix:
+    if: ${{github.event.client_payload.release_branch != '' && github.event.client_payload.hotfix == true && github.event.client_payload.create_release == false && github.event.client_payload.year != 'Select Year' && github.event.client_payload.month != 'Select Month'  }}
+    uses: prgxlabs/dop-githubaction/.github/workflows/hotfixmaven.yml@develop
+    with:
+        repository_url: ${{ github.repository }}
+        branch: ${{ github.event.client_payload.release_branch }}
+        project_initials: 'ail'
+        create_release: ${{ github.event.client_payload.hotfix }}
+        acr-registry: prgxuseacrgbl01
+        destination-acr: prduseacrgbl00
+        helm-repo: prgxlabs/ail-helm-chart
+        projecttype: ddf
+    secrets: inherit  
